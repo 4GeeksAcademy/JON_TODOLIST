@@ -1,28 +1,59 @@
-import React from "react";
+import React, { useState } from "react";
 
-//include images into your bundle
-import rigoImage from "../../img/rigo-baby.jpg";
+export default function TodoApp() {
+  const [tasks, setTasks] = useState([]);
+  const [input, setInput] = useState("");
 
-//create your first component
-const Home = () => {
-	return (
-		<div className="text-center">
-            
+  const handleKeyDown = e => {
+    if (e.key === "Enter" && input.trim() !== "") {
+      setTasks(prev => [...prev, input.trim()]);
+      setInput("");
+    }
+  };
 
-			<h1 className="text-center mt-5">Hello Rigo!</h1>
-			<p>
-				<img src={rigoImage} />
-			</p>
-			<a href="#" className="btn btn-success">
-				If you see this green button... bootstrap is working...
-			</a>
-			<p>
-				Made by{" "}
-				<a href="http://www.4geeksacademy.com">4Geeks Academy</a>, with
-				love!
-			</p>
-		</div>
-	);
-};
+  const removeTask = idx =>
+    setTasks(prev => prev.filter((_, i) => i !== idx));
 
-export default Home;
+  return (
+    <div className="todo-wrapper">
+      <h1 className="todo-title">todos</h1>
+
+      <div className="todo-container">
+        <input
+          className="todo-input"
+          type="text"
+          placeholder="What needs to be done?"
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+        />
+
+        {tasks.length === 0 ? (
+          <p className="empty">No hay tareas, añade tareas</p>
+        ) : (
+          <ul className="task-list">
+            {tasks.map((task, idx) => (
+              <li key={idx} className="task-item">
+                <span className="task-text">{task}</span>
+                <button
+                  className="delete-btn"
+                  onClick={() => removeTask(idx)}
+                >
+                  ×
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {tasks.length > 0 && (
+          <div className="footer">
+            <span>
+              {tasks.length} item{tasks.length !== 1 ? "s" : ""} left
+            </span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
